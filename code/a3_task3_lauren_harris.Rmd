@@ -1,0 +1,25 @@
+---
+title: "Assignment 3 - Task 3 - Lauren Harris"
+author: "Lauren Harris"
+date: "10/21/2021"
+output: html_document
+---
+## Setup
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(here)
+library(tidyverse)
+```
+
+## Read in data
+```{r}
+urchins_data <- read_csv(here("data", "urchins.csv"))
+```
+
+## Urchin size comparison
+```{r}
+# Comparing the sizes of red and purple urchins with a histogram
+
+```
+
