@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(here)
 library(tidyverse)
+library(janitor)
 ```
 
 ## Read in data
@@ -17,9 +18,27 @@ library(tidyverse)
 urchins_data <- read_csv(here("data", "urchins.csv"))
 ```
 
+## Clean up data
+```{r}
+urchins_clean <- urchins_data %>% 
+  clean_names()
+```
+
 ## Urchin size comparison
+
+### Data visualization
 ```{r}
 # Comparing the sizes of red and purple urchins with a histogram
+ggplot(data = urchins_clean, aes(x = size)) +
+  geom_histogram(bin_width = 10) +
+  facet_wrap(~common_name) +
+  labs(x = "Urchin diameter (cm)", y = "Count")
+```
+
+Figure caption goes here
+
+### Table
+```{r}
 
 ```
 
