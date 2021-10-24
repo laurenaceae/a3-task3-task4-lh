@@ -35,6 +35,21 @@ urchins_napl_2010 <- urchins_data %>%
 ```
 
 ### Exploratory data visualization
+
+##### QQ Plot
+```{r}
+ggplot(data = urchins_napl_2010, aes(sample = size),na.rm = FALSE) +
+  geom_qq() +
+  facet_wrap(~treatment)
+```
+##### Histogram
+```{r}
+ggplot(data = urchins_napl_2010, aes(x = size)) +
+  geom_histogram() +
+  stat_bin(bins = 10) +
+  facet_wrap(~treatment)
+```
+### Summary table
 ```{r}
 
 ```
