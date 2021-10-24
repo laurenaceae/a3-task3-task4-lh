@@ -28,7 +28,7 @@ urchins_clean <- urchins_data %>%
 
 ## Urchin size comparison
 
-### Data visualization
+### Urchin Data visualization
 ```{r}
 # Comparing the sizes of red and purple urchins with a histogram
 ggplot(data = urchins_clean, aes(x = size)) +
@@ -51,7 +51,7 @@ urchins_size_subset %>%
 ```
 2-3 sentences about data spread, distribution, central tendency, etc.
 
-## Purple Urchins analysis
+## Purple Urchins Analysis
 ```{r}
 purple_urchins <- urchins_clean %>% 
   filter(common_name == "Purple Urchin") %>% 
@@ -63,5 +63,16 @@ purple_urchins <- urchins_clean %>%
          site %in% "MOHK" ~"Mohawk Reef",
          site %in% "IVEE" ~"Isla Vista Reef"))
 
+purple_urchins_totals <- purple_urchins %>% 
+  group_by(site_full, year) %>% 
+  summarize(n = n())
+```
+
+## Purple Urchins Data Visualization
+```{r}
+ggplot(data = purple_urchins_totals, aes(x = year, y = n)) +
+  geom_col() +
+  facet_wrap(~site_full) +
+  labs(x = "Year", y = "Number of Purple Urchins")
 ```
 
