@@ -18,6 +18,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(janitor)
 library(here)
 library(lubridate)
+library(kableExtra)
+library(tidyverse)
 ```
 ### Read in data
 ```{r}
@@ -42,6 +44,7 @@ ggplot(data = urchins_napl_2010, aes(sample = size),na.rm = FALSE) +
   geom_qq() +
   facet_wrap(~treatment)
 ```
+
 ##### Histogram
 ```{r}
 ggplot(data = urchins_napl_2010, aes(x = size)) +
@@ -49,8 +52,23 @@ ggplot(data = urchins_napl_2010, aes(x = size)) +
   stat_bin(bins = 10) +
   facet_wrap(~treatment)
 ```
+
 ### Summary table
 ```{r}
+urchins_napl_2010_table <- urchins_napl_2010 %>% 
+  group_by(treatment) %>% 
+  summarize(
+    mean_size = mean(size), 
+    median_size = median(size), 
+    sd_size = sd(size), 
+    n = n()) %>% 
+  mutate(treatment = case_when(# Change treatments to lower case
+    treatment %in% "CONTROL" ~ "Control",
+    treatment %in% "ANNUAL" ~ "Annual"
+  ))
 
+urchins_napl_2010_table %>% 
+  kable(caption = "Purple Urchins of Naples Reef in 2010", col.names = c("Treatment", "Mean (cm)", "Median (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
+  kable_styling(full_width = FALSE)
 ```
 
