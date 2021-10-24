@@ -1,0 +1,41 @@
+---
+title: "Assignment 3 - Task 4"
+author: "Lauren Harris"
+date: "10/24/2021"
+output: html_document
+---
+### Overview
+
+`Description here`
+
+**Citation:**
+Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
+### Setup
+```{r setup, include = TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(janitor)
+library(here)
+library(lubridate)
+```
+### Read in data
+```{r}
+# Read in data from urchins.csv and clean the names into lower_snake_case
+urchins_data <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+### Wrangle data
+```{r}
+urchins_napl_2010 <- urchins_data %>% 
+  mutate(date = mdy(date)) %>% 
+  mutate(year = year(date)) %>% 
+  filter(year == "2010" & site == "NAPL" & common_name == "Purple Urchin")
+```
+
+### Exploratory data visualization
+```{r}
+
+```
+
