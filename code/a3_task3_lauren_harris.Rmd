@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(here)
 library(tidyverse)
 library(janitor)
+library(kableExtra)
 ```
 
 ## Read in data
@@ -37,8 +38,16 @@ ggplot(data = urchins_clean, aes(x = size)) +
 
 Figure caption goes here
 
+mean, median, standard deviation, and sample size
+
 ### Table
 ```{r}
+urchins_size_subset <- urchins_clean %>% 
+  group_by(common_name) %>% 
+  summarize(mean_size = mean(size), median_size = median(size), sd_size = sd(size), n_size = n()) 
 
+urchins_size_subset %>% 
+  kable(col.names = c("Common Name", "Mean Size (cm)", "Median Size (cm)", "Standard Deviation", "Sample Size")) %>% 
+  kable_styling(full_width = FALSE)
 ```
 
