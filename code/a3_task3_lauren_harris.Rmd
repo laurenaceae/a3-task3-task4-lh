@@ -4,8 +4,15 @@ author: "Lauren Harris"
 date: "10/21/2021"
 output: html_document
 ---
+### Overview
+
+This document compares the body sizes of red and purple urchins collected along the coast of Santa Barbara, California from 2008 to 2020. It also compares observations of purple urchins at different sites from year to year. 
+
+**Citation:**
+Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
 ### Setup
-```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+```{r setup, include = TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(here)
@@ -26,15 +33,16 @@ urchins_clean <- urchins_data %>%
   clean_names()
 ```
 
-### Urchin Data visualization
+### Urchin Data Visualization
 ```{r}
 # Comparing the sizes of red and purple urchins with a histogram
 ggplot(data = urchins_clean, aes(x = size, color = common_name)) +
-  geom_histogram(bin_width = 10) +
+  geom_histogram() +
   facet_wrap(~common_name) +
   labs(x = "Urchin diameter (cm)", y = "Count") +
   theme(legend.position = "none") +
-  scale_color_manual(values = c("purple", "red"))
+  scale_color_manual(values = c("purple", "red")) +
+  stat_bin(bins = 10)
 ```
 
 
@@ -47,10 +55,10 @@ urchins_size_subset <- urchins_clean %>%
   summarize(mean_size = mean(size), median_size = median(size), sd_size = sd(size), n_size = n()) 
 
 urchins_size_subset %>% 
-  kable(digits = 2, col.names = c("Common Name", "Scientific Name","Mean Size (cm)", "Median Size (cm)", "Standard Deviation", "Sample Size")) %>% 
+  kable(digits = 2, col.names = c("Common Name", "Scientific Name","Mean Size (cm)", "Median Size (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
   kable_styling(full_width = FALSE)
 ```
-The mean and median sizes of the red urchin is larger than the mean and median sizes of purple urchins. The spread of the data is also wider for red urchins, meaning they are more variable. This is also reflected through a higher standard deviation. The red urchins also had a larger range of values, as both urchins had values at zero but the max value for red urchins was past 12 and it was under 10 for purple urchins. 
+The mean and median sizes of the red urchin are larger than the mean and median sizes of purple urchins. The spread of the data is also wider for red urchins, meaning they are more variable. This is reflected through a higher standard deviation for red urchins. The red urchins also had a larger range of values, as both urchins had values at zero but the max value  was past 12 cm for red urchins and under 10 cm for purple urchins. 
 
 ### Purple Urchin Analysis
 ```{r}
@@ -58,11 +66,11 @@ purple_urchins <- urchins_clean %>%
   filter(common_name == "Purple Urchin") %>% 
   mutate(date = mdy(date)) %>% 
   mutate(year = year(date)) %>% 
-  mutate(site_full = case_when(site %in% "NAPL" ~"Naples Reef",
-         site %in% "AQUE" ~"Arroyo Quemado Reef",
-         site %in% "CARP" ~"Carpinteria Reef", 
-         site %in% "MOHK" ~"Mohawk Reef",
-         site %in% "IVEE" ~"Isla Vista Reef"))
+  mutate(site_full = case_when(site %in% "NAPL" ~ "Naples Reef",
+         site %in% "AQUE" ~ "Arroyo Quemado Reef",
+         site %in% "CARP" ~ "Carpinteria Reef", 
+         site %in% "MOHK" ~ "Mohawk Reef",
+         site %in% "IVEE" ~ "Isla Vista Reef"))
 
 purple_urchins_totals <- purple_urchins %>% 
   group_by(site_full, year) %>% 
