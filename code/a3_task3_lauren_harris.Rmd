@@ -2,9 +2,12 @@
 title: "Assignment 3 - Task 3 - Santa Barbara Urchins"
 author: "Lauren Harris"
 date: "10/21/2021"
-output: html_document
+output: 
+  html_document: 
+    theme: readable
+    code_folding: hide
 ---
-### Overview
+## Overview
 
 This document compares the body sizes of red and purple urchins collected along the coast of Santa Barbara, California from 2008 to 2020. It also compares observations of purple urchins at different sites from yearly from 2008 to 2020. 
 
@@ -12,7 +15,7 @@ This document compares the body sizes of red and purple urchins collected along 
 
 Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
-### Setup
+## Setup
 ```{r setup, include = TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
@@ -23,32 +26,34 @@ library(kableExtra)
 library(lubridate)
 ```
 
-### Read in data
+## Read in data
 ```{r}
 urchins_data <- read_csv(here("data", "urchins.csv"))
 ```
 
-### Clean up data
+## Clean up data
 ```{r}
 # makes column names lowercase
 urchins_clean <- urchins_data %>% 
   clean_names()
 ```
 
-### Urchin Data Visualization
+## Urchin Data Visualization
+
+### Red and Purple Urchin Plot
 ```{r}
 # Comparing the sizes of red and purple urchins with a histogram
 ggplot(data = urchins_clean, aes(x = size, color = common_name)) +
   geom_histogram() +
   facet_wrap(~common_name) +
-  labs(x = "Urchin diameter (cm)", y = "Count") +
+  labs(x = "Urchin diameter (cm)", y = "Number of urchins") +
   theme(legend.position = "none") +
   scale_color_manual(values = c("purple", "red")) +
   stat_bin(bins = 10)
 ```
 
 
-Counts of purple urchins (Strongylocentrotus purpuratus) and red urchins (Mesocentrotus franciscanus) at different body diameters (cm). Data was taken along the Santa Barbara coast from 2008 to 2020. 
+**Figure 1.** Counts of purple urchins (Strongylocentrotus purpuratus) and red urchins (Mesocentrotus franciscanus) at different body diameters (cm). Urchin data comes from Santa Barbara, California from 2008 to 2020 and was recorded by SBC LTER program divers
 
 ### Urchin Data Table
 ```{r}
@@ -69,12 +74,13 @@ urchins_size_subset %>%
     "Mean Size (cm)", 
     "Median Size (cm)", 
     "Standard Deviation (cm)", 
-    "Sample Size")) %>% 
+    "Sample Size"), 
+    caption = "<b>Table 1.</b> Summary statistics of Purple and Red urchin sizes. Urchin data comes from Santa Barbara, California from 2008 to 2020 and was recorded by SBC LTER program divers") %>% 
   kable_styling(full_width = FALSE)
 ```
 The mean size of purple urchins is `r round(urchins_size_subset$mean_size[1], 1)` cm, which is `r round(urchins_size_subset$mean_size[2] - urchins_size_subset$mean_size[1], 1)` cm lower than the mean size of red urchins at `r round(urchins_size_subset$mean_size[2], 1)` cm. Mean red urchin size is 47.1% higher than mean purple urchin size. The spread of the data is also wider for red urchins, meaning they are more variable. This is reflected through a higher standard deviation for red urchins compared to purple urchins. The red urchins also had a larger range of values, as both urchins had values at zero but the maximum value  was `r max(urchins_clean[urchins_clean$common_name == "Purple Urchin", ]$size, na.rm = TRUE)` cm for red urchins and `r max(urchins_clean[urchins_clean$common_name == "Red Urchin", ]$size, na.rm = TRUE)` cm for purple urchins. 
 
-### Purple Urchin Analysis
+## Purple Urchin Analysis
 ```{r}
 # Subset only purple urchins, transform dates and site names
 purple_urchins <- urchins_clean %>% 
@@ -102,6 +108,6 @@ ggplot(data = purple_urchins_totals, aes(x = year, y = n)) +
   labs(x = "Year", y = "Number of Purple Urchins")
 ```
 
-Purple urchin observations by location and year. Five plots representing different location along the Santa Barbara, California coast, each containing counts of the number of purple urchins (Strongylocentrotus purpuratus) observed by year. Dates span from 2008 to 2020. 
+**Figure 2.** Purple urchin observations by location and year. Five plots representing different location along the Santa Barbara, California coast, each containing counts of the number of purple urchins (Strongylocentrotus purpuratus) observed by year. Urchin data is from2008 to 2020 and was recorded by SBC LTER program divers
 
 For these data to be useful it must include the effort and amount of time spent making observations. If a given year was low effort and little time was spent making observations, it would appear that there were less urchins even if that does not reflect the true urchin population. An alternative explanation for a low urchin year other than urchins actually being sparse could be that funding was cut and fewer people could be paid to go make urchin observations. 
