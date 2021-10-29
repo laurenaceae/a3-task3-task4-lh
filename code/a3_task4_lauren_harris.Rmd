@@ -2,9 +2,12 @@
 title: "Assignment 3 - Task 4 - 2010 Naples Reef Purple Urchins"
 author: "Lauren Harris"
 date: "10/24/2021"
-output: html_document
+output: 
+  html_document: 
+    theme: readable
+    code_folding: hide
 ---
-### Overview
+## Overview
 
 This document compares the mean size of purple urchins from Naples Reef in 2010 for two different treatments: control (no giant kelp removal) and annual (where giant kelp is removed annually). 
 
@@ -12,7 +15,7 @@ This document compares the mean size of purple urchins from Naples Reef in 2010 
 
 Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
-### Setup
+## Setup
 ```{r setup, include = TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
@@ -22,14 +25,14 @@ library(lubridate)
 library(kableExtra)
 library(tidyverse)
 ```
-### Read in data
+## Read in data
 ```{r}
 # Read in data from urchins.csv and clean the names into lower_snake_case
 urchins_data <- read_csv(here("data", "urchins.csv")) %>% 
   clean_names()
 ```
 
-### Wrangle data
+## Wrangle data
 ```{r}
 # transform dates and include only observations of purple urchins from NAPL in 2010
 urchins_purple_napl_2010 <- urchins_data %>% 
@@ -38,16 +41,16 @@ urchins_purple_napl_2010 <- urchins_data %>%
   filter(year == "2010" & site == "NAPL" & common_name == "Purple Urchin")
 ```
 
-### Exploratory data visualization
+## Exploratory data visualization
 
-##### QQ Plot
+### QQ Plot
 ```{r}
 ggplot(data = urchins_purple_napl_2010, aes(sample = size),na.rm = FALSE) +
   geom_qq() +
   facet_wrap(~treatment)
 ```
 
-##### Histogram
+### Histogram
 ```{r}
 ggplot(data = urchins_purple_napl_2010, aes(x = size)) +
   geom_histogram() +
@@ -73,7 +76,7 @@ urchins_purple_napl_2010_table <- urchins_purple_napl_2010 %>%
 
 # create summary table 
 urchins_purple_napl_2010_table %>% 
-  kable(digits = 2, caption = "Purple Urchins of Naples Reef in 2010", col.names = c("Treatment", "Mean (cm)", "Median (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
+  kable(digits = 2, caption = "<b>Table 1.</b> Body diameters (cm) of Purple Urchins from Naples Reef, Santa Barbara, California in 2010. Urchin data comes was recorded by SBC LTER program divers", col.names = c("Treatment", "Mean (cm)", "Median (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
   kable_styling(full_width = FALSE)
 ```
 
