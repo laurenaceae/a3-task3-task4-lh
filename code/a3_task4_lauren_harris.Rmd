@@ -1,14 +1,15 @@
 ---
-title: "Assignment 3 - Task 4"
+title: "Assignment 3 - Task 4 - 2010 Naples Reef Purple Urchins"
 author: "Lauren Harris"
 date: "10/24/2021"
 output: html_document
 ---
 ### Overview
 
-`Description here`
+This document compares the mean size of purple urchins from Naples Reef in 2010 for two different treatments: control (no giant kelp removal) and annual (where giant kelp is removed annually). 
 
 **Citation:**
+
 Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
 ### Setup
@@ -30,7 +31,8 @@ urchins_data <- read_csv(here("data", "urchins.csv")) %>%
 
 ### Wrangle data
 ```{r}
-urchins_napl_2010 <- urchins_data %>% 
+# transform dates and include only observations of purple urchins from NAPL in 2010
+urchins_purple_napl_2010 <- urchins_data %>% 
   mutate(date = mdy(date)) %>% 
   mutate(year = year(date)) %>% 
   filter(year == "2010" & site == "NAPL" & common_name == "Purple Urchin")
@@ -40,35 +42,38 @@ urchins_napl_2010 <- urchins_data %>%
 
 ##### QQ Plot
 ```{r}
-ggplot(data = urchins_napl_2010, aes(sample = size),na.rm = FALSE) +
+ggplot(data = urchins_purple_napl_2010, aes(sample = size),na.rm = FALSE) +
   geom_qq() +
   facet_wrap(~treatment)
 ```
 
 ##### Histogram
 ```{r}
-ggplot(data = urchins_napl_2010, aes(x = size)) +
+ggplot(data = urchins_purple_napl_2010, aes(x = size)) +
   geom_histogram() +
   stat_bin(bins = 10) +
   facet_wrap(~treatment)
 ```
 
+The qq plots present the data as mostly non-normal, except at very low size values. The histograms for both the control and annual removal treatment show right skew of the data. The spread of the data is similar between treatments as well. Values are concentrated around 3 or 4 cm, there are no values below 2.5 cm, and maximum values are around 7 cm for both treatments. 
+
 ### Summary table
 ```{r}
-urchins_napl_2010_table <- urchins_napl_2010 %>% 
+# group by treatment and then create columns for mean, median, sd, sample size, and then change treatments to lower case
+urchins_purple_napl_2010_table <- urchins_purple_napl_2010 %>% 
   group_by(treatment) %>% 
   summarize(
     mean_size = mean(size), 
     median_size = median(size), 
     sd_size = sd(size), 
     n = n()) %>% 
-  mutate(treatment = case_when(# Change treatments to lower case
+  mutate(treatment = case_when(
     treatment %in% "CONTROL" ~ "Control",
-    treatment %in% "ANNUAL" ~ "Annual"
-  ))
+    treatment %in% "ANNUAL" ~ "Annual"))
 
-urchins_napl_2010_table %>% 
-  kable(caption = "Purple Urchins of Naples Reef in 2010", col.names = c("Treatment", "Mean (cm)", "Median (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
+# create summary table 
+urchins_purple_napl_2010_table %>% 
+  kable(digits = 2, caption = "Purple Urchins of Naples Reef in 2010", col.names = c("Treatment", "Mean (cm)", "Median (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
   kable_styling(full_width = FALSE)
 ```
 

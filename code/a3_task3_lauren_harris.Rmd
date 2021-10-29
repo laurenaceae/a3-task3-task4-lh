@@ -1,14 +1,15 @@
 ---
-title: "Assignment 3 - Task 3 - Lauren Harris"
+title: "Assignment 3 - Task 3 - Santa Barbara Urchins"
 author: "Lauren Harris"
 date: "10/21/2021"
 output: html_document
 ---
 ### Overview
 
-This document compares the body sizes of red and purple urchins collected along the coast of Santa Barbara, California from 2008 to 2020. It also compares observations of purple urchins at different sites from year to year. 
+This document compares the body sizes of red and purple urchins collected along the coast of Santa Barbara, California from 2008 to 2020. It also compares observations of purple urchins at different sites from yearly from 2008 to 2020. 
 
 **Citation:**
+
 Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
 ### Setup
@@ -29,6 +30,7 @@ urchins_data <- read_csv(here("data", "urchins.csv"))
 
 ### Clean up data
 ```{r}
+# makes column names lowercase
 urchins_clean <- urchins_data %>% 
   clean_names()
 ```
@@ -50,28 +52,43 @@ Counts of purple urchins (Strongylocentrotus purpuratus) and red urchins (Mesoce
 
 ### Urchin Data Table
 ```{r}
+# group urchins by species then calculate mean, median, sd, and sample size
 urchins_size_subset <- urchins_clean %>% 
   group_by(common_name, scientific_name) %>% 
-  summarize(mean_size = mean(size), median_size = median(size), sd_size = sd(size), n_size = n()) 
+  summarize(
+    mean_size = mean(size), 
+    median_size = median(size), 
+    sd_size = sd(size), 
+    n_size = n()) 
 
+# create a summary table 
 urchins_size_subset %>% 
-  kable(digits = 2, col.names = c("Common Name", "Scientific Name","Mean Size (cm)", "Median Size (cm)", "Standard Deviation (cm)", "Sample Size")) %>% 
+  kable(digits = 2, col.names = c(
+    "Common Name", 
+    "Scientific Name", 
+    "Mean Size (cm)", 
+    "Median Size (cm)", 
+    "Standard Deviation (cm)", 
+    "Sample Size")) %>% 
   kable_styling(full_width = FALSE)
 ```
-The mean and median sizes of the red urchin are larger than the mean and median sizes of purple urchins. The spread of the data is also wider for red urchins, meaning they are more variable. This is reflected through a higher standard deviation for red urchins. The red urchins also had a larger range of values, as both urchins had values at zero but the max value  was past 12 cm for red urchins and under 10 cm for purple urchins. 
+The mean size of purple urchins is `r round(urchins_size_subset$mean_size[1], 1)` cm, which is `r round(urchins_size_subset$mean_size[2] - urchins_size_subset$mean_size[1], 1)` cm lower than the mean size of red urchins at `r round(urchins_size_subset$mean_size[2], 1)` cm. Mean red urchin size is 47.1% higher than mean purple urchin size. The spread of the data is also wider for red urchins, meaning they are more variable. This is reflected through a higher standard deviation for red urchins compared to purple urchins. The red urchins also had a larger range of values, as both urchins had values at zero but the max value  was `r max(urchins_clean[urchins_clean$common_name == "Purple Urchin", ]$size, na.rm = TRUE)` cm for red urchins and under `r max(urchins_clean[urchins_clean$common_name == "Red Urchin", ]$size, na.rm = TRUE)` cm for purple urchins. 
 
 ### Purple Urchin Analysis
 ```{r}
+# Subset only purple urchins, transform dates and site names
 purple_urchins <- urchins_clean %>% 
   filter(common_name == "Purple Urchin") %>% 
   mutate(date = mdy(date)) %>% 
   mutate(year = year(date)) %>% 
-  mutate(site_full = case_when(site %in% "NAPL" ~ "Naples Reef",
-         site %in% "AQUE" ~ "Arroyo Quemado Reef",
-         site %in% "CARP" ~ "Carpinteria Reef", 
-         site %in% "MOHK" ~ "Mohawk Reef",
-         site %in% "IVEE" ~ "Isla Vista Reef"))
+  mutate(site_full = case_when(
+    site %in% "NAPL" ~ "Naples Reef", 
+    site %in% "AQUE" ~ "Arroyo Quemado Reef",
+    site %in% "CARP" ~ "Carpinteria Reef", 
+    site %in% "MOHK" ~ "Mohawk Reef",
+    site %in% "IVEE" ~ "Isla Vista Reef"))
 
+# group urchins by site and year, then get counts for those
 purple_urchins_totals <- purple_urchins %>% 
   group_by(site_full, year) %>% 
   summarize(n = n())
@@ -87,4 +104,4 @@ ggplot(data = purple_urchins_totals, aes(x = year, y = n)) +
 
 Purple urchin observations by location and year. Five plots representing different location along the Santa Barbara, California coast, each containing counts of the number of purple urchins (Strongylocentrotus purpuratus) observed by year. Dates span from 2008 to 2020. 
 
-For these data to be useful it must include the amount of time spent making observations. If a given year was low effort and little time was spent making observations, it would appear that there were less urchins even if that does not reflect the true population. An alternative explanation for a low urchin year other than urchins actually being sparse could be that funding was cut and fewer people could be paid to go make urchin observations. 
+For these data to be useful it must include the effort and amount of time spent making observations. If a given year was low effort and little time was spent making observations, it would appear that there were less urchins even if that does not reflect the true urchin population. An alternative explanation for a low urchin year other than urchins actually being sparse could be that funding was cut and fewer people could be paid to go make urchin observations. 
